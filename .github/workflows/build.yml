@@ -11,15 +11,15 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.7
-      - name: Unzip project
+          gradle-version: 8.9
+      - name: Unpack project
         run: |
-          mkdir src
-          unzip -q CVApply.zip -d src
-          echo "DIR=$(dirname "$(find src -name settings.gradle.kts | head -1)")" >> $GITHUB_ENV
-      - name: Build
-        run: cd "$DIR" && gradle assembleDebug
+          unzip -o CVApply.zip
+          unzip -o CVApply-update.zip
+          cp -r upd/app/. CVApply/app/
+      - run: gradle assembleDebug --no-daemon
+        working-directory: CVApply
       - uses: actions/upload-artifact@v4
         with:
-          name: CVApply-apk
-          path: src/**/build/outputs/apk/debug/*.apk
+          name: cv-apply-apk
+          path: CVApply/app/build/outputs/apk/debug/app-debug.apk
